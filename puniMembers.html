@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PuniMemberds</title>
+    <title>Document</title>
     <style>
         /* 余白とパディングをリセット */
         html, body {
@@ -32,6 +32,20 @@
             width: 30%;
         }
 
+        .topA{
+            
+            font-size: 24px;
+            font-weight: bold;
+            padding-left: 12px;
+            border-left: 10px solid red;
+            margin-left: 10px;
+        }
+
+        .topA_body{
+            margin-left: 10px;
+            font-size: 16px;
+        }
+
         .logo {
             padding-left: 10px;
             padding-top: 10px;
@@ -57,14 +71,14 @@
         }
 
         .button {
-            padding: 8px 8px;
+            padding: 8px 10px;
             background-color: #ff1a1a;
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
             box-shadow: 0 5px 10px -5px rgba(0,0,0,0.8);
         }
 
@@ -135,7 +149,7 @@
           background: #04177d;/*背景色*/
           padding-left: 25px;
           padding-right: 25px;
-          font-size: 15px;
+          font-size: 20px;
         }
 
         .members{
@@ -151,17 +165,62 @@
           margin-bottom: 5px;
         }
 
+.howto1 {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px; /* 内側のスペースを確保 */
+}
+
+.howtotitie1 {
+    margin: 0;
+    padding: 10px 0; /* 上下のスペースを確保 */
+    font-size: 20px;
+    font-weight: bold;
+    background-color: rgb(43, 43, 43, 0.9); /* 背景色を設定 */
+    color: #ffffff; /* テキストカラーを指定 */
+    width: 100vw; /* ビューポート幅に合わせる */
+    position: relative; /* 相対位置を指定 */
+    left: calc(-50vw + 50%); /* ビューポート幅を調整して横端に合わせる */
+    box-sizing: border-box; /* パディングを幅に含める */
+    padding-left: 20px;
+    
+}
+       .howto2{
+          margin: 0;
+          padding: 0;
+            font-size: 18px;
+            margin-left: 10px;
+            font-weight: bold;
+            box-sizing: border-box; 
+
+        }
+
+        .howtotitie2{
+          margin: 0;
+    padding: 10px 0; /* 上下のスペースを確保 */
+    font-size: 20px;
+    font-weight: bold;
+    background-color: rgb(43, 43, 43, 0.9); /* 背景色を設定 */
+    color: #ffffff; /* テキストカラーを指定 */
+    width: 100vw; /* ビューポート幅に合わせる */
+    position: relative; /* 相対位置を指定 */
+    left: calc(-50vw + 50%); /* ビューポート幅を調整して横端に合わせる */
+    box-sizing: border-box; /* パディングを幅に含める */
+    padding-left: 20px;
+        }
+
+        
+
+        .topimg{
+            margin-top: 100px;
+        }
+
         .foot{
             border-top: 5px solid red;
             padding-top: 10px;
             text-align: center;
         }
 
-        .newtext{
-          margin-left: 15px;
-          font-size: 20px;
-        }
-        
         .hamburger {
     display: none;
     cursor: pointer;
@@ -183,29 +242,17 @@
         font-size: 0px; 
         font-weight: bold;
         color: black; /* テキストカラーを指定 */
-    }
+}
 
 /* スマホ用のスタイル */
 @media screen and (max-width: 768px) {
 
-  .title_member{
-    font-size: 20px;
-  }
-
-  .title_member_2{
-    font-size: 20px;
-  }
-
-  .newtext{
-    font-size: 14px;
-  }
-
   .tableA th{/*thに対して*/
           color: #ffffff;/*文字色*/
           background: #04177d;/*背景色*/
-          padding-left: 10px;
-          padding-right: 10px;
-          font-size: 10px;
+          padding-left: 15px;
+          padding-right: 15px;
+          font-size: 13px;
         }
 
   .button {
@@ -245,11 +292,9 @@
     .menuber {
     display: flex; /* 横並びにする */
     align-items: center; /* 縦方向中央揃え */
+}
 
-
-  }
-
-  .menu {
+.menu {
         margin-right: 0px; /* ハンバーガーメニューとの間隔を調整 */
         position: absolute;
         top: 8px;
@@ -259,116 +304,68 @@
         color: rgb(0, 0, 0); /* テキストカラーを指定 */
     }
 }
-  
-</style>
+
+    </style>
 </head>
 <body>
-  <div class="top">
-    <div class="top_left">
-        <div class="logo">
-            <img src="./img2/logo.png" width="200px">
+    <div class="top">
+        <div class="top_left">
+            <div class="logo">
+                <img src="./img2/logo.png" width="200px">
+            </div>
         </div>
-    </div>
-    <div class="menuber">
-      <div class="menu">メニュー</div> <!-- ハンバーガーメニューの左に表示するテキスト -->
-      <div class="hamburger" onclick="toggleMenu()">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-      </div>
-    </div>
+
+        <div class="menuber">
+          <div class="menu">メニュー</div> <!-- ハンバーガーメニューの左に表示するテキスト -->
+          <div class="hamburger" onclick="toggleMenu()">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+          </div>
+        </div>
     
-
-
-    <div class="top_right">
-        <a href="https://156ryo.github.io/membership/howtomember.html"><button class="button">メンバーシップの加入方法</button></a>
-        <a href="https://156ryo.github.io/membership/tokuten.html"><button class="button">メンバーシップ特典</button></a>
-        <a href="https://www.youtube.com/channel/UCZW2ohmOGZQq2f02lxKcyjA/join"><button class="button">メンバーシップ加入</button></a>
-    </div>
-</div>
-
-	<div class="scroll-infinity">
-        <div class="scroll-infinity__wrap">
-          <ul class="scroll-infinity__list scroll-infinity__list--left">
-            <li class="scroll-infinity__item"><img src="./img2/haikei.jpg" /></li>                        
-            <li class="scroll-infinity__item"><img src="./img2/circuit.jpg" /></li>
-            <li class="scroll-infinity__item"><img src="./img2/samne.png" /></li>
-          </ul>
-          <ul class="scroll-infinity__list scroll-infinity__list--left">
-            <li class="scroll-infinity__item"><img src="./img2/haikei.jpg" /></li>                        
-            <li class="scroll-infinity__item"><img src="./img2/circuit.jpg" /></li>
-            <li class="scroll-infinity__item"><img src="./img2/samne.png" /></li>
-          </ul>
-
+    
+        <div class="top_right">
+            <a href="#home"><button class="button">ホームへ戻る</button></a>
+            <a href="https://www.youtube.com/channel/UCZW2ohmOGZQq2f02lxKcyjA/join"><button class="button">メンバーシップ特典</button></a>
+            <a href="#contact"><button class="button">メンバーシップ加入</button></a>
         </div>
-        </div>
-
-    <div class="top2">
-      <div class="members">
-        <p class="title_member">           
-          メンバーシップの会員一覧
-        </p>
-      </div>
-
-        <p class="punimembers">① ぷにメンバーズ</p>
-        <table border="1" class="tableA">
-          <tr>
-            <th>Youtubeアカウント名</th><th>ぷにぷにユーザー名</th><th>有効月or無効月</th>
-          </tr>
-          <tr>
-            <td>あおねこ</td><td>作成中</td><td>有効</td>
-          </tr>
-          <tr>
-            <td>SAME</td><td>作成中</td><td>有効</td>
-          </tr>
-          <tr>
-            <td>はる</td><td>作成中</td><td>有効</td>
-          </tr>
-          <tr>
-            <td>井上曲希</td><td>作成中</td><td>有効</td>
-          </tr>
-          <tr>
-            <td>やんこ</td><td>なし</td><td>有効</td>
-          </tr>
-          <tr>
-            <td>みき</td><td>なし</td><td>有効</td>
-          </tr>
-        </table>
-
-        <p class="punimembers">② 選ばれし者</p>
-        <table border="1" class="tableA">
-          <tr>
-            <th>Youtubeアカウント名</th>
-          </tr>
-          <tr>
-            <td>もち</td>
-          </tr>
-          <tr>
-            <td>ちぃ</td>
-          </tr>
-          <tr>
-            <td>miki</td>
-          </tr>
-          <tr>
-            <td>Naoya K</td>
-          </tr>
-
-
-        </table>
-
+  </div>
+    </div>
+    <div class="topimg">
+        <a href="https://www.youtube.com/channel/UCZW2ohmOGZQq2f02lxKcyjA/join"><img src="./img2/entry.png" width="100%"></a>
+    </div>
+    <div class="topA">
+        <p>メンバーシップの加入方法</p>
+    </div>
+    <div class="topA_body">
+        <p>メンバーシップの加入方法は、いくつか例がございます。
+            ご自身が加入しやすい方法をご利用下さい。</p>
+    </div>
+    <div class="howto1">
+        <p class="howtotitie1">やり方1(配信中の場合)<br></p>
+        <p class="">※<font color="red">PCのみ</font>なためスマホの方は<font color="red">やり方2</font>を推奨</p>
+        <p class="howtobody1">① ライブ配信のチャットを開く<br>
+        ② $マークをクリック<br>
+        <img src="./img2/mem2.png" width="50%"><br>
+        ③ メンバーシップを選択<br><img src="./img2/mem1.png" width="50%"><br>
+        ④ メンバーシップレベルを選択<br>
+        <img src="./img2/mem3.png" width="50%">
+          
+    <br>⑤ お支払い情報を入れる<br>完了！！</p>
+    </div>
+    <div class="howto2">
+        <p class="howtotitie2">やり方2(配信外の場合)</p>
+        <p class="howtobody2">① 以下のリンク開く<br>
+            <a href="https://www.youtube.com/channel/UCZW2ohmOGZQq2f02lxKcyjA/join">メンバーシップ加入ページ</a><br>
+            ② メンバーシップレベルを選択<br><img src="./img2/mem3.png" width="50%">
+        <br>③ お支払い情報を入れる<br>完了！！</p></p><br><br>
     </div>
 
-    <div class="top3">
-      <p class="title_member_2">           
-        新着情報
-      </p>
-      <p class="newtext">2024.9.15 ぷにメンバーズ会員サイトを開設！</p>
-    </div>
-    <br><br><br>
     <div class="foot">
       <img src="./img2/logo.png" width="160px">
-      
   </div>
+
   <script>
     function toggleMenu() {
         const navLinks = document.querySelector('.top_right');
@@ -390,5 +387,7 @@
     document.addEventListener("click", closeMenu);
     document.addEventListener("touchstart", closeMenu);
 </script>
+
+
 </body>
 </html>
