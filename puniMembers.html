@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PuniMemberds</title>
+    <style>
+        /* 余白とパディングをリセット */
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .top {
+          position: fixed;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 0;
+
+            display: flex;
+            width: 100%;
+            height: 100px;
+            background-color: rgb(255, 255, 255);
+            border-bottom: 8px solid rgb(255, 0, 0);
+            box-shadow: 0 5px 10px -5px rgba(0,0,0,0.6);
+            z-index:1000;
+        }
+
+        .top_left {
+            width: 30%;
+        }
+
+        .logo {
+            padding-left: 10px;
+            padding-top: 10px;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .top_right {
+            width: 70%;
+            display: flex;
+            justify-content: flex-end; /* ボタンを右揃え */
+            align-items: center; /* ボタンを中央に揃える */
+            padding-right: 10px; /* 右側に余白を追加 */
+        }
+
+        .top_right a {
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .button {
+            padding: 8px 8px;
+            background-color: #ff1a1a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 5px 10px -5px rgba(0,0,0,0.8);
+        }
+
+        .button:hover {
+            background-color: #ffa600;
+        }
+
+        .title_member {
+          margin: 0;
+          margin-left: 15px;
+          border-left: 10px solid red;
+            font-size: 28px;
+            padding-left: 14px;
+            font-weight: bold;
+        }
+
+        .title_member_2{
+          margin: 0;
+          margin-left: 15px;
+          border-left: 10px solid red;
+            font-size: 28px;
+            padding-left: 14px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        @keyframes infinity-scroll-left {
+          from {
+            transform: translateX(0);
+          }
+            to {
+            transform: translateX(-100%);
+          }
+        }
+
+        .scroll-infinity__wrap {
+          margin-top: 94px;
+          display: flex;
+          overflow: hidden;
+        }
+        .scroll-infinity__list {
+          display: flex;
+          list-style: none;
+          padding: 0
+        }
+        .scroll-infinity__list--left {
+          animation: infinity-scroll-left 80s infinite linear 0.5s both;
+        }
+        .scroll-infinity__item {
+          width: calc(100vw / 3);
+        }
+        .scroll-infinity__item>img {
+          width: 100%;
+        }
+
+        table{
+          border-collapse: collapse;
+          margin-left: 20px;
+        }
+
+        table td {
+          border: solid 1px black;
+          font-size: 20px;
+          /*実線 1px 黒*/
+        }
+        .tableA th{/*thに対して*/
+          color: #ffffff;/*文字色*/
+          background: #04177d;/*背景色*/
+          padding-left: 25px;
+          padding-right: 25px;
+          font-size: 15px;
+        }
+
+        .members{
+          margin: 0;
+        }
+
+        .punimembers{
+          margin: 0;
+          font-size: 20px;
+          font-weight: bold;
+          margin-left: 20px;
+          margin-top: 10px;
+          margin-bottom: 5px;
+        }
+
+        .foot{
+            border-top: 5px solid red;
+            padding-top: 10px;
+            text-align: center;
+        }
+
+        .newtext{
+          margin-left: 15px;
+          font-size: 20px;
+        }
+        
+        .hamburger {
+    display: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    position: absolute;
+    right: 10px; /* 右端に配置 */
+    top: 35px; /* ヘッダー内で中央寄せ */
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background-color: black;
+}
+
+.menu {
+        margin-right: 10px; /* ハンバーガーメニューとの間隔を調整 */
+        font-size: 0px; 
+        font-weight: bold;
+        color: black; /* テキストカラーを指定 */
+    }
+
+/* スマホ用のスタイル */
+@media screen and (max-width: 768px) {
+
+  .tableA th{/*thに対して*/
+          color: #ffffff;/*文字色*/
+          background: #04177d;/*背景色*/
+          padding-left: 15px;
+          padding-right: 15px;
+          font-size: 13px;
+        }
+
+  .button {
+            padding: 8px 8px;
+            background-color: rgba(0,0,0,0.1);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 5px 10px -5px rgba(0,0,0,0.8);
+        }
+
+        .button:hover {
+            background-color: #ffa600;
+        }
+    .hamburger {
+        display: flex; /* スマホでは表示する */
+    }
+
+    .top_right {
+        display: none;
+        flex-direction: column;
+        background-color: rgba(0,0,0,0.8);
+        position: absolute;
+        top: 110px; /* ヘッダーの下に表示 */
+        right: 0;
+        width: 100%; /* 横幅を100%にする */
+        text-align: center; /* メニューを中央揃えにする */
+    }
+
+    .top_right.active {
+        display: flex;
+    }
+
+    .menuber {
+    display: flex; /* 横並びにする */
+    align-items: center; /* 縦方向中央揃え */
+
+
+  }
+
+  .menu {
+        margin-right: 0px; /* ハンバーガーメニューとの間隔を調整 */
+        position: absolute;
+        top: 8px;
+        right: 10px;
+        font-size: 16px; 
+        font-weight: bold;
+        color: rgb(0, 0, 0); /* テキストカラーを指定 */
+    }
+}
+  
+</style>
+</head>
+<body>
+  <div class="top">
+    <div class="top_left">
+        <div class="logo">
+            <img src="./img2/logo.png" width="200px">
+        </div>
+    </div>
+    <div class="menuber">
+      <div class="menu">メニュー</div> <!-- ハンバーガーメニューの左に表示するテキスト -->
+      <div class="hamburger" onclick="toggleMenu()">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+    
+
+
+    <div class="top_right">
+        <a href="#home"><button class="button">メンバーシップの加入方法</button></a>
+        <a href=""><button class="button">メンバーシップ特典</button></a>
+        <a href="https://www.youtube.com/channel/UCZW2ohmOGZQq2f02lxKcyjA/join"><button class="button">メンバーシップ加入</button></a>
+    </div>
+</div>
+
+	<div class="scroll-infinity">
+        <div class="scroll-infinity__wrap">
+          <ul class="scroll-infinity__list scroll-infinity__list--left">
+            <li class="scroll-infinity__item"><img src="./img2/基板.jpg" /></li>                        
+            <li class="scroll-infinity__item"><img src="./img2/背景.jpg" /></li>
+            <li class="scroll-infinity__item"><img src="./img2/サムネ　.png" /></li>
+          </ul>
+          <ul class="scroll-infinity__list scroll-infinity__list--left">
+            <li class="scroll-infinity__item"><img src="./img2/基板.jpg" /></li>                        
+            <li class="scroll-infinity__item"><img src="./img2/背景.jpg" /></li>
+            <li class="scroll-infinity__item"><img src="./img2/サムネ　.png" /></li>
+          </ul>
+
+        </div>
+        </div>
+
+    <div class="top2">
+      <div class="members">
+        <p class="title_member">           
+          メンバーシップの会員一覧
+        </p>
+      </div>
+
+        <p class="punimembers">① ぷにメンバーズ</p>
+        <table border="1" class="tableA">
+          <tr>
+            <th>Youtubeアカウント名</th><th>ぷにぷにユーザー名</th><th>有効月or無効月</th>
+          </tr>
+          <tr>
+            <td>あおねこ</td><td></td><td>有効</td>
+          </tr>
+          <tr>
+            <td>SAME</td><td></td><td>有効</td>
+          </tr>
+          <tr>
+            <td>はる</td><td></td><td>有効</td>
+          </tr>
+          <tr>
+            <td>井上曲希</td><td></td><td>有効</td>
+          </tr>
+          <tr>
+            <td>やんこ</td><td>なし</td><td>有効</td>
+          </tr>
+          <tr>
+            <td>みき</td><td>なし</td><td>有効</td>
+          </tr>
+        </table>
+
+        <p class="punimembers">② 選ばれし者</p>
+        <table border="1" class="tableA">
+          <tr>
+            <th>Youtubeアカウント名</th>
+          </tr>
+          <tr>
+            <td>もち</td>
+          </tr>
+          <tr>
+            <td>ちぃ</td>
+          </tr>
+          <tr>
+            <td>miki</td>
+          </tr>
+          <tr>
+            <td>Naoya K</td>
+          </tr>
+
+
+        </table>
+
+    </div>
+
+    <div class="top3">
+      <p class="title_member_2">           
+        新着情報
+      </p>
+      <p class="newtext">2024.9.15 ぷにメンバーズ会員サイトを開設！</p>
+    </div>
+    <br><br><br>
+    <div class="foot">
+      <img src="./img2/logo.png" width="160px">
+      
+  </div>
+  <script>
+    function toggleMenu() {
+        const navLinks = document.querySelector('.top_right');
+        navLinks.classList.toggle('active');
+    }
+
+    // メニューバー以外をクリックまたはタッチした時にメニューを閉じる処理
+    function closeMenu(event) {
+        const navLinks = document.querySelector('.top_right');
+        const hamburger = document.querySelector('.hamburger');
+
+        // クリックまたはタッチされた要素がメニューバーやハンバーガーメニュー以外の場合
+        if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+            navLinks.classList.remove('active');
+        }
+    }
+
+    // click と touchstart の両方を監視
+    document.addEventListener("click", closeMenu);
+    document.addEventListener("touchstart", closeMenu);
+</script>
+</body>
+</html>
