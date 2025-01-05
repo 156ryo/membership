@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>おみくじ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: #ffeb3b;
+            padding: 20px;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .container {
+            margin-top: 50px;
+            position: relative;
+        }
+        .gacha-machine {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            margin: 0 auto;
+        }
+        .machine {
+            width: 100%;
+            height: auto;
+        }
+        .knob {
+            position: absolute;
+            bottom: -40px;
+            right: 95px;
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .result-stage {
+            position: relative;
+            top: -300px;
+            left: 494px;
+            width: 600px;
+            height: 600px;
+            overflow: hidden;
+        }
+        .ball {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            top: 200px;
+            left: 45%;
+            transform: translateX(-50%);
+            display: none;
+            animation: drop 1s ease-in-out forwards;
+        }
+        .paper {
+            width: 280px;
+            height: 189px;
+            background-image: url(./img2/おみくじ紙B.png);
+            background-size: cover;
+            border: 2px solid black;
+            position: absolute;
+            top: 150px;
+            left: 20%;
+            transform: translateX(-50%) scale(30%);
+            text-align: center;
+            line-height: 180px;
+            font-size: 4rem;
+            font-weight: bold;
+            display: none;
+        }
+        @keyframes drop {
+            0% { top: 400px; }
+            100% { top: 450px; }
+        }
+        @keyframes open {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1rem;
+            margin: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .reset-button {
+            background-color: #f44336;
+        }
+        .reset-button:hover {
+            background-color: #e53935;
+        }
+        .name-input-container {
+            margin-bottom: 20px;
+        }
+
+        .disc{
+            font-size: 48px;
+            font-weight: bold;
+            color: #ffeb3b;
+            background-color: #e53935;
+        }
+    </style>
+</head>
+<body>
+    <div class="header" id="header">おみくじの挑戦者求む!</div>
+    <div class="disc">1回 100円(スパチャ)</div>
+
+    <div class="container">
+        <div class="gacha-machine">
+            <img src="./img2/ガチャ.png" alt="ガチャ筐体" class="machine">
+            <img src="./img2/つまみ.png" alt="ツマミ" class="knob" id="knob">
+        </div>
+        <div class="result-stage">
+            <img src="./img2/玉.png" alt="ガチャ玉" class="ball" id="ball">
+            <div class="paper" id="paper"></div>
+        </div>
+        <div class="name-input-container">
+            <input type="text" id="name-input" placeholder="名前を入力" />
+            <button id="name-submit">OK</button>
+        </div>
+        <button id="start-button">回す</button>
+        <button id="reset-button" class="reset-button">リセット</button>
+    </div>
+    <script>
+        const fortunes = [
+            { name: "大吉", probability: 25 },
+            { name: "中吉", probability: 30 },
+            { name: "小吉", probability: 40 },
+            { name: "凶", probability: 5 }
+        ];
+
+        const header = document.getElementById("header");
+        const nameInput = document.getElementById("name-input");
+        const nameSubmit = document.getElementById("name-submit");
+        const knob = document.getElementById("knob");
+        const ball = document.getElementById("ball");
+        const paper = document.getElementById("paper");
+        const startButton = document.getElementById("start-button");
+        const resetButton = document.getElementById("reset-button");
+
+        nameSubmit.addEventListener("click", function () {
+            const name = nameInput.value.trim();
+            if (name) {
+                header.textContent = `${name}さんの挑戦`;
+            } else {
+                header.textContent = "";
+            }
+        });
+
+        startButton.addEventListener("click", function () {
+            // ツマミを回すアニメーション
+            knob.style.transform = "rotate(180deg)";
+
+            setTimeout(() => {
+                // ガチャ玉が落ちる
+                ball.style.display = "block";
+
+                setTimeout(() => {
+                    // ガチャ玉が開いて紙が出る
+                    paper.style.display = "block";
+                    paper.style.animation = "open 2s ease-in-out forwards";
+
+                    const result = drawFortune();
+                    knob.style.transform = "rotate(0deg)";
+                    paper.textContent = result;
+                }, 1000);
+            }, 500);
+        });
+
+        resetButton.addEventListener("click", function () {
+            // リセット処理
+            knob.style.transform = "rotate(0deg)";
+            ball.style.display = "none";
+            paper.style.display = "none";
+            paper.style.animation = "";
+        });
+
+        function drawFortune() {
+            const random = Math.random() * 100;
+            let cumulativeProbability = 0;
+
+            for (const fortune of fortunes) {
+                cumulativeProbability += fortune.probability;
+                if (random < cumulativeProbability) {
+                    return fortune.name;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
