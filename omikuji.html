@@ -8,7 +8,7 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background-color: #f9f9f9;
+            background-color: #fff6d3;
             margin: 0;
             padding: 0;
         }
@@ -20,13 +20,12 @@
             margin-bottom: 20px;
         }
         .container {
-            margin-top: 50px;
+            margin-top: 20px;
             position: relative;
         }
         .gacha-machine {
             position: relative;
-            width: 300px;
-            height: 400px;
+            width: 600px;
             margin: 0 auto;
         }
         .machine {
@@ -35,58 +34,79 @@
         }
         .knob {
             position: absolute;
-            bottom: -40px;
-            right: 95px;
-            width: 100px;
-            height: 100px;
+            bottom: 222px;
+            right: 225px;
+            width: 150px;
+            height: 150px;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
         .result-stage {
-            position: relative;
-            top: -300px;
-            left: 494px;
+            position: absolute;
             width: 600px;
-            height: 600px;
-            overflow: hidden;
+            height: 1250px;
+            
+            left: 50%;
+            top: -720px;
+            transform: translate(-50%, 0);
+            pointer-events: none;
         }
         .ball {
-            width: 80px;
-            height: 80px;
+            width: 160px;
+            height: 160px;
             position: absolute;
-            top: 200px;
-            left: 45%;
+            top: 100px; /* 落下開始位置を高く設定 */
+            left: 49%;
             transform: translateX(-50%);
             display: none;
-            animation: drop 1s ease-in-out forwards;
+            animation: drop 1.5s ease-in-out forwards; /* 落下時間を少し長く */
         }
-        .paper {
-            width: 280px;
-            height: 189px;
-            background-image: url(./img2/おみくじ紙B.png);
-            background-size: cover;
-            border: 2px solid black;
-            position: absolute;
-            top: 150px;
-            left: 20%;
-            transform: translateX(-50%) scale(30%);
-            text-align: center;
-            line-height: 180px;
-            font-size: 4rem;
+
+.paper {
+    width: 382px;
+    height: 269px;
+    background-image: url(./img2/おみくじ紙B.png);
+    background-size: cover;
+    border: 2px solid black;
+    position: absolute;
+    top: -300px; /* 表示位置を上に移動 */
+    left: 16%; /* 少し左に移動 */
+    transform: translate(-50%, 0) scale(0); /* 初期は非表示 */
+    text-align: center;
+    line-height: 1.5;
+    font-size: 6rem;
+    font-weight: bold;
+    display: none;
+    animation: open 1.2s ease-in-out forwards; /* 拡大アニメーション */
+}
+
+@keyframes drop {
+    0% {
+        top: 30px; /* 落下開始位置 */
+    }
+    100% {
+        top: 120px; /* 落下終了位置 */
+    }
+}
+
+@keyframes open {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+        .lucky-item {
+            font-size: 2.3rem;
+            color: #ff2222;
             font-weight: bold;
-            display: none;
+            margin-top: -10px;
         }
-        @keyframes drop {
-            0% { top: 400px; }
-            100% { top: 450px; }
-        }
-        @keyframes open {
-            0% { transform: scale(0); }
-            100% { transform: scale(1); }
-        }
+
         button {
-            padding: 10px 20px;
-            font-size: 1rem;
+            padding: 20px 40px;
+            font-size: 2rem;
             margin: 10px;
             background-color: #4caf50;
             color: white;
@@ -104,10 +124,11 @@
             background-color: #e53935;
         }
         .name-input-container {
-            margin-bottom: 20px;
+            margin-top: 80px;
+            margin-bottom: 10px;
+            font-size: 4em;
         }
-
-        .disc{
+        .disc {
             font-size: 48px;
             font-weight: bold;
             color: #ffeb3b;
@@ -121,15 +142,15 @@
 
     <div class="container">
         <div class="gacha-machine">
-            <img src="./img2/ガチャ.png" alt="ガチャ筐体" class="machine">
-            <img src="./img2/つまみ.png" alt="ツマミ" class="knob" id="knob">
+            <img src="./img2/ガチャリアルA.png" alt="ガチャ筐体" class="machine">
+            <img src="./img2/つまみリアルA.png" alt="ツマミ" class="knob" id="knob">
         </div>
-        <div class="result-stage">
-            <img src="./img2/玉.png" alt="ガチャ玉" class="ball" id="ball">
+        <div class="result-stage" id="result-stage">
+            <img src="" alt="ガチャ玉" class="ball" id="ball">
             <div class="paper" id="paper"></div>
         </div>
         <div class="name-input-container">
-            <input type="text" id="name-input" placeholder="名前を入力" />
+            <input type="text" id="name-input" style="width: 200px; height: 50px; font-size: 28px;" placeholder="名前を入力" />
             <button id="name-submit">OK</button>
         </div>
         <button id="start-button">回す</button>
@@ -137,11 +158,26 @@
     </div>
     <script>
         const fortunes = [
-            { name: "大吉", probability: 25 },
-            { name: "中吉", probability: 30 },
-            { name: "小吉", probability: 40 },
-            { name: "凶", probability: 5 }
+            { name: "神 吉", probability: 2, img: "./img2/神の玉.png" },
+            { name: "極 吉", probability: 8, img: "./img2/金の玉.png" },
+            { name: "大 吉", probability: 15, img: "./img2/銅玉.png" },
+            { name: "中 吉", probability: 25, img: "./img2/赤玉.png" },
+            { name: "小 吉", probability: 30, img: "./img2/青玉.png" },
+            { name: "凶", probability: 20, img: "./img2/外れ玉.png" }
         ];
+
+        const luckyItems = [
+            "四つ葉のクローバー",
+            "金の鈴",
+            "赤いリボン",
+            "青い石",
+            "木の葉",
+            "光るペンダント",
+            "ラッキーコイン",
+            "幸運のカエル"
+        ];
+
+        let currentFortune = null;
 
         const header = document.getElementById("header");
         const nameInput = document.getElementById("name-input");
@@ -151,42 +187,46 @@
         const paper = document.getElementById("paper");
         const startButton = document.getElementById("start-button");
         const resetButton = document.getElementById("reset-button");
+        const resultStage = document.getElementById("result-stage");
 
         nameSubmit.addEventListener("click", function () {
             const name = nameInput.value.trim();
             if (name) {
                 header.textContent = `${name}さんの挑戦`;
             } else {
-                header.textContent = "";
+                header.textContent = "おみくじの挑戦者求む!";
             }
         });
 
         startButton.addEventListener("click", function () {
-            // ツマミを回すアニメーション
+            currentFortune = drawFortune();
+            const luckyItem = drawLuckyItem();
+            ball.src = currentFortune.img;
+
             knob.style.transform = "rotate(180deg)";
 
             setTimeout(() => {
-                // ガチャ玉が落ちる
                 ball.style.display = "block";
 
                 setTimeout(() => {
-                    // ガチャ玉が開いて紙が出る
                     paper.style.display = "block";
                     paper.style.animation = "open 2s ease-in-out forwards";
 
-                    const result = drawFortune();
                     knob.style.transform = "rotate(0deg)";
-                    paper.textContent = result;
+                    paper.innerHTML = `
+                        ${currentFortune.name}
+                        <div class="lucky-item">ラッキーアイテム<br>${luckyItem}</div>
+                    `;
                 }, 1000);
             }, 500);
         });
 
         resetButton.addEventListener("click", function () {
-            // リセット処理
             knob.style.transform = "rotate(0deg)";
             ball.style.display = "none";
             paper.style.display = "none";
             paper.style.animation = "";
+            currentFortune = null;
         });
 
         function drawFortune() {
@@ -196,10 +236,26 @@
             for (const fortune of fortunes) {
                 cumulativeProbability += fortune.probability;
                 if (random < cumulativeProbability) {
-                    return fortune.name;
+                    return fortune;
                 }
             }
         }
+
+        function drawLuckyItem() {
+            const randomIndex = Math.floor(Math.random() * luckyItems.length);
+            return luckyItems[randomIndex];
+        }
+
+        function updateResultStagePosition() {
+            const gachaMachine = document.querySelector('.gacha-machine');
+            const machineRect = gachaMachine.getBoundingClientRect();
+
+            resultStage.style.top = `${machineRect.top + window.scrollY + machineRect.height / 2}px`;
+            resultStage.style.left = `${machineRect.left + window.scrollX + machineRect.width / 2}px`;
+        }
+
+        window.addEventListener('resize', updateResultStagePosition);
+        window.addEventListener('load', updateResultStagePosition);
     </script>
 </body>
 </html>
