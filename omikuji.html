@@ -14,8 +14,8 @@
         }
         .header {
             background-color: #ffeb3b;
-            padding: 20px;
-            font-size: 3rem;
+            padding: 8px;
+            font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 20px;
         }
@@ -25,7 +25,7 @@
         }
         .gacha-machine {
             position: relative;
-            width: 600px;
+            width: 300px;
             margin: 0 auto;
         }
         .machine {
@@ -34,10 +34,10 @@
         }
         .knob {
             position: absolute;
-            bottom: 222px;
-            right: 225px;
-            width: 150px;
-            height: 150px;
+            bottom: 112px;
+            right: 112px;
+            width: 80px;
+            height: 80px;
             cursor: pointer;
             transition: transform 0.3s ease;
         }
@@ -52,10 +52,10 @@
             pointer-events: none;
         }
         .ball {
-            width: 160px;
-            height: 160px;
+            width: 80px;
+            height: 80px;
             position: absolute;
-            top: 100px; /* 落下開始位置を高く設定 */
+            top: 20px; /* 落下開始位置を高く設定 */
             left: 49%;
             transform: translateX(-50%);
             display: none;
@@ -63,18 +63,18 @@
         }
 
 .paper {
-    width: 382px;
-    height: 269px;
+    width: 272px;
+    height: 189px;
     background-image: url(./img2/おみくじ紙B.png);
     background-size: cover;
     border: 2px solid black;
     position: absolute;
     top: -300px; /* 表示位置を上に移動 */
-    left: 16%; /* 少し左に移動 */
+    left: 26%; /* 少し左に移動 */
     transform: translate(-50%, 0) scale(0); /* 初期は非表示 */
     text-align: center;
-    line-height: 1.5;
-    font-size: 6rem;
+    line-height: 1.6;
+    font-size: 4rem;
     font-weight: bold;
     display: none;
     animation: open 1.2s ease-in-out forwards; /* 拡大アニメーション */
@@ -82,10 +82,10 @@
 
 @keyframes drop {
     0% {
-        top: 30px; /* 落下開始位置 */
+        top: -12px; /* 落下開始位置 */
     }
     100% {
-        top: 120px; /* 落下終了位置 */
+        top: 20px; /* 落下終了位置 */
     }
 }
 
@@ -98,20 +98,20 @@
     }
 }
         .lucky-item {
-            font-size: 2.3rem;
+            font-size: 1.6rem;
             color: #ff2222;
             font-weight: bold;
             margin-top: -10px;
         }
 
         button {
-            padding: 20px 40px;
-            font-size: 2rem;
-            margin: 10px;
+            padding: 8px 15px;
+            font-size: 1.6rem;
+            margin: 2px;
             background-color: #4caf50;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
         }
         button:hover {
@@ -124,12 +124,12 @@
             background-color: #e53935;
         }
         .name-input-container {
-            margin-top: 80px;
-            margin-bottom: 10px;
+            margin-top: 0px;
+            margin-bottom: 15px;
             font-size: 4em;
         }
         .disc {
-            font-size: 48px;
+            font-size: 28px;
             font-weight: bold;
             color: #ffeb3b;
             background-color: #e53935;
