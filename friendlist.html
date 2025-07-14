@@ -100,7 +100,7 @@
     </main>
 
     <script>
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7fkIli9cuT7imWYnb2MgBDIyEcgVZfEK3oq0PCOLC3fTIsXMtvYNBI2AyHLkTO0rx/exec';
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbydpRUKRmCN7P_1rIylcsjUQOyz4JI3-lIqx0lkdOLRSAs6_Kej8gpqZ1KtZd3J15pG/exec';
 
         window.addEventListener('load', function() {
             fetch(GAS_WEB_APP_URL)
@@ -122,7 +122,6 @@
                         } else {
                             currentBody.innerHTML = '<tr><td colspan="2">現在、フレンドはいません。</td></tr>';
                         }
-                       
                         // --- 来月のフレンドリストを表示 ---
                         const nextMonthBody = document.querySelector('#next-month-list tbody');
                         if (nextMonthFriends.length > 0) {
