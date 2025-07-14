@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ゲームフレンド申請フォーム</title>
     <style>
-        /* 見た目を整えるための簡単なCSS */
         body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: 2em auto; padding: 0 1em; }
         h1 { text-align: center; }
         form { display: flex; flex-direction: column; gap: 1em; }
@@ -20,7 +19,7 @@
     <h1>ぷにぷにフレンド申請</h1>
     <p>フレンド枠には限りがあり、申請は先着順となります。毎月1日にリストが更新されます。</p>
     <p>禁止事項</p>
-    <p>登録できるのは1垢のみ、卑猥な言葉の入力は禁止</p>
+    <p>複数垢の登録(無許可時に限る)、卑猥な言葉の入力</p>
     <p>守れなかった場合はこちらで登録を削除します。</p>
     <form id="friend-form">
         <label for="game-username">ゲームのユーザー名</label>
@@ -42,10 +41,8 @@
 
 
     <script>
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-        // ここに、ステップ2でコピーしたGASのウェブアプリURLを貼り付けます
+
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7fkIli9cuT7imWYnb2MgBDIyEcgVZfEK3oq0PCOLC3fTIsXMtvYNBI2AyHLkTO0rx/exec';
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
 
         const form = document.getElementById('friend-form');
         const messageDiv = document.getElementById('message');
