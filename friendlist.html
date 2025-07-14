@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>現在のフレンドリスト</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 2em auto; padding: 0 1em; }
-        h1, h2 { text-align: center; }
+        body { font-family: sans-serif; line-height: 1.6; max-width: 1000px; margin: 2em auto; padding: 0 1em; } /* 横幅を少し広げました */
+        h1 { text-align: center; }
         #loading { text-align: center; font-size: 1.2em; }
         .lists-container { display: flex; flex-wrap: wrap; gap: 2em; justify-content: center; }
-        .list-card { border: 1px solid #ccc; border-radius: 8px; padding: 1em; width: 300px; }
+        .list-card { border: 1px solid #ccc; border-radius: 8px; padding: 1em; width: 300px; } /* クラス名を統一 */
         .list-card h3 { margin-top: 0; }
         table { width: 100%; border-collapse: collapse; }
         th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
@@ -23,7 +23,7 @@
 
     <div class="lists-container">
         <div class="list-card">
-            <h3>今月のフレンド 🎉</h3>
+            <h3>今月のフレンド (MAX20名)</h3>
             <table id="current-friends-list">
                 <thead>
                     <tr>
@@ -36,8 +36,8 @@
         </div>
 
         <div class="list-card">
-            <h3>待機中リスト ⏳</h3>
-            <table id="waiting-list">
+            <h3>来月のフレンド (MAX20名)</h3>
+            <table id="next-month-list">
                 <thead>
                     <tr>
                         <th>順番</th>
@@ -47,17 +47,26 @@
                 <tbody></tbody>
             </table>
         </div>
+
+        <div class="list-card">
+            <h3>来月以降のフレンド待機者</h3>
+            <table id="future-list">
+                <thead>
+                    <tr>
+                        <th>順番</th>
+                        <th>ユーザー名</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>      
     </div>
     
     <hr>
     <p style="text-align:center;"><a href="https://156ryo.github.io/membership/touroku.html">申請フォームに戻る</a></p>
 
     <script>
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
-        // ここにも、ステップ2でコピーしたGASのウェブアプリURLを貼り付けます
-        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyyrJhL-fhEryZxIyeIh-QKChcmegukJINm_R4-yj2-9rmrWh_gjKlpiHtGXnfiFhn3/exec';
-        
-        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyQlUUuhJrb5_ehgOpWZTC0rXYbSd2YFp783bUKDOCiQ_FqDE7513E1k8zD9Qw-i-Wg/exec';
 
         window.addEventListener('load', function() {
             fetch(GAS_WEB_APP_URL)
@@ -66,12 +75,13 @@
                     document.getElementById('loading').style.display = 'none';
 
                     if (result.status === 'success') {
-                        const { currentFriends, waitingList } = result.data;
+                        // GASから3つのリストを受け取る
+                        const { currentFriends, nextMonthFriends, futureFriends } = result.data;
                         
-                        // 今月のフレンドリストを表示
+                        // --- 今月のフレンドリストを表示 ---
                         const currentBody = document.querySelector('#current-friends-list tbody');
                         if (currentFriends.length > 0) {
-                             currentFriends.forEach((friend, index) => {
+                            currentFriends.forEach((friend, index) => {
                                 const row = `<tr><td>${index + 1}</td><td>${escapeHtml(friend.gameUsername)}</td></tr>`;
                                 currentBody.innerHTML += row;
                             });
@@ -79,15 +89,26 @@
                             currentBody.innerHTML = '<tr><td colspan="2">現在、フレンドはいません。</td></tr>';
                         }
                        
-                        // 待機リストを表示
-                        const waitingBody = document.querySelector('#waiting-list tbody');
-                        if (waitingList.length > 0) {
-                            waitingList.forEach((waiter, index) => {
+                        // --- 来月のフレンドリストを表示 ---
+                        const nextMonthBody = document.querySelector('#next-month-list tbody');
+                        if (nextMonthFriends.length > 0) {
+                            nextMonthFriends.forEach((waiter, index) => {
                                 const row = `<tr><td>${index + 1}</td><td>${escapeHtml(waiter.gameUsername)}</td></tr>`;
-                                waitingBody.innerHTML += row;
+                                nextMonthBody.innerHTML += row;
                             });
                         } else {
-                             waitingBody.innerHTML = '<tr><td colspan="2">待機中の人はいません。</td></tr>';
+                            nextMonthBody.innerHTML = '<tr><td colspan="2">待機中の人はいません。</td></tr>';
+                        }
+
+                        // --- 来月以降のフレンドリストを表示 ---
+                        const futureBody = document.querySelector('#future-list tbody');
+                        if (futureFriends.length > 0) {
+                            futureFriends.forEach((waiter, index) => {
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(waiter.gameUsername)}</td></tr>`;
+                                futureBody.innerHTML += row;
+                            });
+                        } else {
+                            futureBody.innerHTML = '<tr><td colspan="2">待機中の人はいません。</td></tr>';
                         }
 
                     } else {
@@ -100,15 +121,10 @@
                 });
         });
 
-        // HTMLエスケープ関数（安全のため）
         function escapeHtml(str) {
             return str.replace(/[&<>"']/g, function(match) {
                 return {
-                    '&': '&amp;',
-                    '<': '&lt;',
-                    '>': '&gt;',
-                    '"': '&quot;',
-                    "'": '&#39;'
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
                 }[match];
             });
         }
