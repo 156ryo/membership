@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現在のフレンドリスト</title>
+    <style>
+        /* ページ全体の余白をなくし、背景色などを設定 */
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            line-height: 1.6;
+        }
+        
+        /* 一番上のヘッダー帯 */
+        header {
+            height: 20px;
+            background-color: #051278;
+        }
+
+        /* メインコンテンツ部分のスタイル */
+        main {
+            max-width: 1200px; /* テーブル幅に合わせて少し広げました */
+            margin: 2em auto;
+            padding: 0 1em;
+        }
+
+        h1 { text-align: center; }
+        #loading { text-align: center; font-size: 1.2em; }
+        .lists-container { display: flex; flex-wrap: wrap; gap: 2em; justify-content: center; }
+        .list-card { border: 1px solid #170442; border-radius: 8px; padding: 1em; width: 350px; } /* カード幅を少し広げました */
+        .list-card h3 { margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #21046a; }
+        th { color: #dddddd; background-color: #051278; }
+
+        .attention{
+            text-align: center;
+        }
+
+        /* 一番下のフッター帯 */
+        footer {
+            height: 10px;
+            background-color: #051278;
+        }
+    </style>
+</head>
+<body>
+
+    <header></header>
+    <main>
+        <h1>現在のフレンドリスト</h1>
+        <p class="attention">今月のフレンドリストは月初に更新されるため<br>再度フレンドを希望する方はもう一度<br>フレンド申請をお願い申し上げます。</p>
+        <p id="loading"><font color="red">データを読み込んでいます...</font></p>
+
+        <div class="lists-container">
+            <div class="list-card">
+                <h3>今月のフレンド (MAX20名)</h3>
+                <table id="current-friends-list">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>ユーザー名</th>
+                            <th>ゲームID</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="list-card">
+                <h3>来月のフレンド (MAX20名)</h3>
+                <table id="next-month-list">
+                    <thead>
+                        <tr>
+                            <th>順番</th>
+                            <th>ユーザー名</th>
+                            <th>ゲームID</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="list-card">
+                <h3>来月以降のフレンド待機者</h3>
+                <table id="future-list">
+                    <thead>
+                        <tr>
+                            <th>順番</th>
+                            <th>ユーザー名</th>
+                            <th>ゲームID</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>      
+        </div>
+        
+        <hr>
+        <p style="text-align:center;"><a href="https://156ryo.github.io/membership/touroku.html">申請フォームに戻る</a></p>
+    </main>
+    <footer></footer>
+
+    <script>
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7fkIli9cuT7imWYnb2MgBDIyEcgVZfEK3oq0PCOLC3fTIsXMtvYNBI2AyHLkTO0rx/exec';
+
+        window.addEventListener('load', function() {
+            fetch(GAS_WEB_APP_URL)
+                .then(response => response.json())
+                .then(result => {
+                    document.getElementById('loading').style.display = 'none';
+
+                    if (result.status === 'success') {
+                        const { currentFriends, nextMonthFriends, futureFriends } = result.data;
+                        
+                        // --- 今月のフレンドリストを表示 ---
+                        const currentBody = document.querySelector('#current-friends-list tbody');
+                        if (currentFriends.length > 0) {
+                            currentFriends.forEach((friend, index) => {
+                                // ゲームIDの列を追加
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(friend.gameUsername)}</td><td>${escapeHtml(friend.gameId)}</td></tr>`;
+                                currentBody.innerHTML += row;
+                            });
+                        } else {
+                            currentBody.innerHTML = '<tr><td colspan="3">現在、フレンドはいません。</td></tr>';
+                        }
+                       
+                        // --- 来月のフレンドリストを表示 ---
+                        const nextMonthBody = document.querySelector('#next-month-list tbody');
+                        if (nextMonthFriends.length > 0) {
+                            nextMonthFriends.forEach((waiter, index) => {
+                                // ゲームIDの列を追加
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(waiter.gameUsername)}</td><td>${escapeHtml(waiter.gameId)}</td></tr>`;
+                                nextMonthBody.innerHTML += row;
+                            });
+                        } else {
+                            nextMonthBody.innerHTML = '<tr><td colspan="3">待機中の人はいません。</td></tr>';
+                        }
+
+                        // --- 来月以降のフレンドリストを表示 ---
+                        const futureBody = document.querySelector('#future-list tbody');
+                        if (futureFriends.length > 0) {
+                            futureFriends.forEach((waiter, index) => {
+                                // ゲームIDの列を追加
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(waiter.gameUsername)}</td><td>${escapeHtml(waiter.gameId)}</td></tr>`;
+                                futureBody.innerHTML += row;
+                            });
+                        } else {
+                            futureBody.innerHTML = '<tr><td colspan="3">待機中の人はいません。</td></tr>';
+                        }
+
+                    } else {
+                        throw new Error(result.message);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loading').textContent = 'エラー: ' + error.message;
+                    document.getElementById('loading').style.color = 'red';
+                });
+        });
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(match) {
+                return {
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+                }[match];
+            });
+        }
+    </script>
+</body>
+</html>
