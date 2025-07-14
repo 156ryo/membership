@@ -36,6 +36,18 @@
         .channel-button:hover {
             background-color: #cc0000;
         }
+        .confirm-button {
+            display: inline-block;
+            padding: 5px 15px;
+            background-color: #ff0000; /* YouTubeの赤色 */
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .confirm-button:hover {
+            background-color: #cc0000;
+        }        
     </style>
 </head>
     <header></header>
@@ -46,14 +58,14 @@
         <h1>ぷにぷにフレンド申請</h1>
             <p>フレンド枠には限りがあり、申請は先着順となります。<br>なお、毎月1日にリストが更新されます。</p>
             
-            <p><b>お願い</b></p>
+            <p><b>1  お願い</b></p>
             
             <div style="display: flex; align-items: center; gap: 1em;">
                 <p style="margin: 0;">申請する方はチャンネル登録をお願いいたします。</p><br>
                 
             </div>
             <a href="https://www.youtube.com/@ryonixi" target="_blank" class="channel-button">チャンネル登録</a>
-            <p><b>禁止事項</b></p>
+            <p><b>2  禁止事項</b></p>
             <p><font color="red">複数垢の登録(無許可時に限る)、卑猥な言葉の入力</font></p>
             <p>守れなかった場合はこちらで登録を削除します。</p>
 
@@ -73,7 +85,7 @@
             <div id="message"></div>
 
             <hr>
-            <p style="text-align:center;"><a href="https://156ryo.github.io/membership/friendlist.html">現在のフレンドリストを見る</a></p>
+            <p style="text-align:center;"><a href="https://156ryo.github.io/membership/friendlist.html" class="confirm-button">現在のフレンドリストを見る</a></p>
     </div>
     
     <script>
@@ -98,7 +110,7 @@
             .then(data => {
                 if (data.status === 'success') {
                     messageDiv.style.color = 'green';
-                    messageDiv.textContent = '応募が完了しました！リストページをご確認ください。';
+                    messageDiv.textContent = '申請が受理しました！以下の"現在のフレンドリストを見る"よりあなたの申請状況をご確認ください。';
                     form.reset();
                 } else {
                     throw new Error(data.message);
