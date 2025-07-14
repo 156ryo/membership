@@ -5,71 +5,99 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>現在のフレンドリスト</title>
     <style>
-        body { font-family: sans-serif; line-height: 1.6; max-width: 1000px; margin: 2em auto; padding: 0 1em; } /* 横幅を少し広げました */
+        /* ページ全体の余白をなくし、背景色などを設定 */
+        body {
+            margin: 0;
+            font-family: sans-serif;
+            line-height: 1.6;
+        }
+        
+        /* 一番上のヘッダー帯 */
+        header {
+            height: 20px; /* 高さを少し太くしました (5pxだと細すぎるため) */
+            background-color: #051278; /* テーブルヘッダーと同じ色 */
+        }
+
+        /* メインコンテンツ部分のスタイル */
+        main {
+            max-width: 1000px;
+            margin: 2em auto;
+            padding: 0 1em;
+        }
+
         h1 { text-align: center; }
         #loading { text-align: center; font-size: 1.2em; }
         .lists-container { display: flex; flex-wrap: wrap; gap: 2em; justify-content: center; }
-        .list-card { border: 1px solid #ccc; border-radius: 8px; padding: 1em; width: 300px; } /* クラス名を統一 */
+        .list-card { border: 1px solid #170442; border-radius: 8px; padding: 1em; width: 300px; }
         .list-card h3 { margin-top: 0; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-        th { background-color: #f2f2f2; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #21046a; }
+        th { color: #dddddd; background-color: #051278; }
 
         .attention{
             text-align: center;
+        }
+
+        /* 一番下のフッター帯 */
+        footer {
+            height: 10px; /* 高さを少し太くしました */
+            background-color: #051278;
         }
     </style>
 </head>
 <body>
 
-    <h1>現在のフレンドリスト</h1>
-    <p class="attention">今月のフレンドリストは月初に更新されるため<br>再度フレンドを希望する方はもう一度<br>フレンド申請をお願い申し上げます。</p>
-    <p id="loading">データを読み込んでいます...</p>
+    <header></header>
+    <main>
+        <h1>現在のフレンドリスト</h1>
+        <p class="attention">今月のフレンドリストは月初に更新されるため<br>再度フレンドを希望する方はもう一度<br>フレンド申請をお願い申し上げます。</p>
+        <p id="loading">データを読み込んでいます...</p>
 
-    <div class="lists-container">
-        <div class="list-card">
-            <h3>今月のフレンド (MAX20名)</h3>
-            
-            <table id="current-friends-list">
-                <thead>
-                    <tr>
-                        <th>No.</th>
-                        <th>ユーザー名</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+        <div class="lists-container">
+            <div class="list-card">
+                <h3>今月のフレンド (MAX20名)</h3>
+                
+                <table id="current-friends-list">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>ユーザー名</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="list-card">
+                <h3>来月のフレンド (MAX20名)</h3>
+                <table id="next-month-list">
+                    <thead>
+                        <tr>
+                            <th>順番</th>
+                            <th>ユーザー名</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            <div class="list-card">
+                <h3>来月以降のフレンド待機者</h3>
+                <table id="future-list">
+                    <thead>
+                        <tr>
+                            <th>順番</th>
+                            <th>ユーザー名</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>      
         </div>
-
-        <div class="list-card">
-            <h3>来月のフレンド (MAX20名)</h3>
-            <table id="next-month-list">
-                <thead>
-                    <tr>
-                        <th>順番</th>
-                        <th>ユーザー名</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
-
-        <div class="list-card">
-            <h3>来月以降のフレンド待機者</h3>
-            <table id="future-list">
-                <thead>
-                    <tr>
-                        <th>順番</th>
-                        <th>ユーザー名</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>      
-    </div>
-    
-    <hr>
-    <p style="text-align:center;"><a href="https://156ryo.github.io/membership/touroku.html">申請フォームに戻る</a></p>
+        
+        <hr>
+        <p style="text-align:center;"><a href="https://156ryo.github.io/membership/touroku.html">申請フォームに戻る</a></p>
+    </main>
 
     <script>
         const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbz7fkIli9cuT7imWYnb2MgBDIyEcgVZfEK3oq0PCOLC3fTIsXMtvYNBI2AyHLkTO0rx/exec';
