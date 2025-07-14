@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現在のフレンドリスト</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 2em auto; padding: 0 1em; }
+        h1, h2 { text-align: center; }
+        #loading { text-align: center; font-size: 1.2em; }
+        .lists-container { display: flex; flex-wrap: wrap; gap: 2em; justify-content: center; }
+        .list-card { border: 1px solid #ccc; border-radius: 8px; padding: 1em; width: 300px; }
+        .list-card h3 { margin-top: 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+
+    <h1>現在のフレンドリスト</h1>
+    <p id="loading">データを読み込んでいます...</p>
+
+    <div class="lists-container">
+        <div class="list-card">
+            <h3>今月のフレンド 🎉</h3>
+            <table id="current-friends-list">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>ユーザー名</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="list-card">
+            <h3>待機中リスト ⏳</h3>
+            <table id="waiting-list">
+                <thead>
+                    <tr>
+                        <th>順番</th>
+                        <th>ユーザー名</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <hr>
+    <p style="text-align:center;"><a href="index.html">申請フォームに戻る</a></p>
+
+    <script>
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        // ここにも、ステップ2でコピーしたGASのウェブアプリURLを貼り付けます
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwF9OIj8oflhDD0hkcDe2lG0zgjzbPYg7gbAJH-kmhyyThML8LddsG_TZGz0s9lg40H/exec';
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        window.addEventListener('load', function() {
+            fetch(GAS_WEB_APP_URL)
+                .then(response => response.json())
+                .then(result => {
+                    document.getElementById('loading').style.display = 'none';
+
+                    if (result.status === 'success') {
+                        const { currentFriends, waitingList } = result.data;
+                        
+                        // 今月のフレンドリストを表示
+                        const currentBody = document.querySelector('#current-friends-list tbody');
+                        if (currentFriends.length > 0) {
+                             currentFriends.forEach((friend, index) => {
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(friend.gameUsername)}</td></tr>`;
+                                currentBody.innerHTML += row;
+                            });
+                        } else {
+                            currentBody.innerHTML = '<tr><td colspan="2">現在、フレンドはいません。</td></tr>';
+                        }
+                       
+                        // 待機リストを表示
+                        const waitingBody = document.querySelector('#waiting-list tbody');
+                        if (waitingList.length > 0) {
+                            waitingList.forEach((waiter, index) => {
+                                const row = `<tr><td>${index + 1}</td><td>${escapeHtml(waiter.gameUsername)}</td></tr>`;
+                                waitingBody.innerHTML += row;
+                            });
+                        } else {
+                             waitingBody.innerHTML = '<tr><td colspan="2">待機中の人はいません。</td></tr>';
+                        }
+
+                    } else {
+                        throw new Error(result.message);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('loading').textContent = 'エラー: ' + error.message;
+                    document.getElementById('loading').style.color = 'red';
+                });
+        });
+
+        // HTMLエスケープ関数（安全のため）
+        function escapeHtml(str) {
+            return str.replace(/[&<>"']/g, function(match) {
+                return {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#39;'
+                }[match];
+            });
+        }
+    </script>
+</body>
+</html>

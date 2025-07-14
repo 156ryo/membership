@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ゲームフレンド申請フォーム</title>
+    <style>
+        /* 見た目を整えるための簡単なCSS */
+        body { font-family: sans-serif; line-height: 1.6; max-width: 600px; margin: 2em auto; padding: 0 1em; }
+        h1 { text-align: center; }
+        form { display: flex; flex-direction: column; gap: 1em; }
+        label { font-weight: bold; }
+        input { padding: 0.5em; border: 1px solid #ccc; border-radius: 4px; }
+        button { padding: 0.7em; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 1em; }
+        button:hover { background-color: #0056b3; }
+        #message { margin-top: 1em; text-align: center; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>ゲームフレンド申請フォーム</h1>
+    <p>フレンド枠には限りがあるため、申請は先着順となります。毎月1日にリストが更新されます。</p>
+
+    <form id="friend-form">
+        <label for="game-username">ゲームのユーザー名</label>
+        <input type="text" id="game-username" name="gameUsername" required>
+
+        <label for="youtube-name">YouTubeのアカウント名</label>
+        <input type="text" id="youtube-name" name="youtubeName" required>
+
+        <label for="game-id">フレンドID</label>
+        <input type="text" id="game-id" name="gameId" required>
+
+        <button type="submit" id="submit-button">送信する</button>
+    </form>
+    
+    <div id="message"></div>
+
+    <hr>
+    <p style="text-align:center;"><a href="list.html">現在のフレンドリストを見る</a></p>
+
+
+    <script>
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+        // ここに、ステップ2でコピーしたGASのウェブアプリURLを貼り付けます
+        const GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwF9OIj8oflhDD0hkcDe2lG0zgjzbPYg7gbAJH-kmhyyThML8LddsG_TZGz0s9lg40H/exec';
+        // ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+        const form = document.getElementById('friend-form');
+        const messageDiv = document.getElementById('message');
+        const submitButton = document.getElementById('submit-button');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // フォームのデフォルトの送信をキャンセル
+
+            submitButton.disabled = true;
+            submitButton.textContent = '送信中...';
+            messageDiv.textContent = '';
+
+            const formData = new FormData(form);
+            
+            fetch(GAS_WEB_APP_URL, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = '応募が完了しました！リストページをご確認ください。';
+                    form.reset(); // フォームをリセット
+                } else {
+                    throw new Error(data.message);
+                }
+            })
+            .catch(error => {
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'エラーが発生しました: ' + error.message;
+            })
+            .finally(() => {
+                submitButton.disabled = false;
+                submitButton.textContent = '送信する';
+            });
+        });
+    </script>
+</body>
+</html>
