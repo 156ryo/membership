@@ -121,11 +121,12 @@
             animation: multi-open 0.5s ease-out forwards;
         }
 
+        /* ★★★ 変更点: 上の余白を調整して文字を少し上に移動 ★★★ */
         .multi-lucky-item {
             font-size: 1.5rem;
             color: #ff2222;
             line-height: 1.4;
-            margin-top: 5px;
+            margin-top: -12px; /* 5px -> -5px */
         }
         
         .multi-paper.small {
@@ -137,6 +138,7 @@
 
         .multi-paper.small .multi-lucky-item {
             font-size: 1.2rem;
+            margin-top: 5px; /* 10連の時は元のまま */
         }
 
 
@@ -442,15 +444,12 @@
             });
         }
         
-        // ★★★ 変更点: 演出のタイミングを調整 ★★★
         function revealResultsSequentially(results) {
             const ballImages = document.querySelectorAll(".multi-result-container .multi-ball");
 
             return new Promise(resolve => {
                 results.forEach((result, i) => {
-                    // 2秒ごとに、次の玉の開封サイクルを開始
                     setTimeout(() => {
-                        // ① まず、玉の色を変える
                         const targetBall = ballImages[i];
                         if (targetBall) {
                             targetBall.style.opacity = '0';
@@ -460,16 +459,14 @@
                             }, 200);
                         }
 
-                        // ② 玉の色が変わってから、1秒後に紙を開封する
                         setTimeout(() => {
                             revealStage.innerHTML = "";
                             const paperDiv = document.createElement("div");
                             paperDiv.className = "multi-paper small";
                             paperDiv.innerHTML = `${result.fortune.name}<div class="multi-lucky-item">${result.luckyItem}</div>`;
                             revealStage.appendChild(paperDiv);
-                        }, 1000); // 1秒待つ
+                        }, 1000);
 
-                        // 最後の処理が終わったら次に進む
                         if (i === results.length - 1) {
                             setTimeout(() => {
                                 revealStage.innerHTML = "";
