@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>おみくじ</title>
+    <title>おみくじガチャ</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,27 +11,45 @@
             background-color: #fff6d3;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
+
         .header {
             background-color: #ffeb3b;
             padding: 8px;
             font-size: 1.8rem;
             font-weight: bold;
-            margin-bottom: 20px;
         }
+        
+        .pricing-info {
+            background-color: #ffcbcb;
+            color: #333;
+            padding: 5px 0;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
         .container {
             margin-top: 20px;
             position: relative;
+            flex-grow: 1;
+            padding-bottom: 200px; 
         }
+
         .gacha-machine {
             position: relative;
             width: 300px;
             margin: 0 auto;
         }
+
         .machine {
             width: 100%;
             height: auto;
         }
+
         .knob {
             position: absolute;
             bottom: 112px;
@@ -39,75 +57,184 @@
             width: 80px;
             height: 80px;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.5s ease;
         }
-        .result-stage {
+
+        .multi-result-container {
             position: absolute;
-            width: 600px;
-            height: 1250px;
-            
+            top: 400px;
             left: 50%;
-            top: -720px;
-            transform: translate(-50%, 0);
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 470px; 
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            padding: 10px;
+            gap: 15px;
+            min-height: 100px;
+        }
+        
+        .reveal-stage {
+            position: fixed;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
             pointer-events: none;
         }
-        .ball {
+        
+        .multi-result-item {
             width: 80px;
             height: 80px;
-            position: absolute;
-            top: 20px; /* 落下開始位置を高く設定 */
-            left: 49%;
-            transform: translateX(-50%);
-            display: none;
-            animation: drop 1.5s ease-in-out forwards; /* 落下時間を少し長く */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: width 0.3s ease, height 0.3s ease, opacity 0.5s ease;
         }
 
-.paper {
-    width: 272px;
-    height: 189px;
-    background-image: url(./img2/おみくじ紙B.png);
-    background-size: cover;
-    border: 2px solid black;
-    position: absolute;
-    top: -300px; /* 表示位置を上に移動 */
-    left: 26%; /* 少し左に移動 */
-    transform: translate(-50%, 0) scale(0); /* 初期は非表示 */
-    text-align: center;
-    line-height: 1.6;
-    font-size: 4rem;
-    font-weight: bold;
-    display: none;
-    animation: open 1.2s ease-in-out forwards; /* 拡大アニメーション */
-}
+        .multi-ball {
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            animation: multi-drop 0.5s ease-out forwards;
+            transition: opacity 0.2s ease-in-out;
+        }
 
-@keyframes drop {
-    0% {
-        top: -12px; /* 落下開始位置 */
-    }
-    100% {
-        top: 20px; /* 落下終了位置 */
-    }
-}
-
-@keyframes open {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-        .lucky-item {
-            font-size: 1.6rem;
-            color: #ff2222;
+        .multi-paper {
+            width: 272px;
+            height: 189px;
+            background-image: url(./img2/おみくじ紙B.png);
+            background-size: cover;
+            border: 1px solid black;
+            font-size: 4rem;
             font-weight: bold;
-            margin-top: -10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 10px 10px 10px;
+            box-sizing: border-box;
+            transform: scale(0);
+            animation: multi-open 0.5s ease-out forwards;
         }
+
+        .multi-lucky-item {
+            font-size: 1.5rem;
+            color: #ff2222;
+            line-height: 1.4;
+            margin-top: 5px;
+        }
+        
+        .multi-paper.small {
+            width: 220px;
+            height: 150px;
+            font-size: 2.5rem;
+            padding-top: 10px;
+        }
+
+        .multi-paper.small .multi-lucky-item {
+            font-size: 1.2rem;
+        }
+
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            text-align: left;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0 20px;
+        }
+
+        #summary-list h3, #lucky-items-list h3 {
+            text-align: center;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+        }
+        #summary-list ul, #lucky-items-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #summary-list li, #lucky-items-list li {
+            font-size: 1.3rem;
+            padding: 5px 0;
+            font-weight: bold;
+        }
+
+        #modal-close-button {
+            display: block;
+            margin: 20px auto 0;
+        }
+        
+        .controls {
+            margin-top: auto;
+            padding: 15px 0;
+            background-color: #f0f0f0;
+            border-top: 1px solid #ccc;
+            z-index: 100;
+        }
+        
+        .name-input-area {
+            background-color: #f0f0f0;
+            padding-bottom: 20px;
+        }
+
+        .name-input-area input {
+            font-size: 1.2rem;
+            padding: 8px;
+            margin-right: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .name-input-area button {
+            font-size: 1.2rem;
+            padding: 8px 15px;
+        }
+
 
         button {
             padding: 8px 15px;
             font-size: 1.6rem;
-            margin: 2px;
+            margin: 5px;
             background-color: #4caf50;
             color: white;
             border: none;
@@ -117,59 +244,9 @@
         button:hover {
             background-color: #45a049;
         }
-        .reset-button {
-            background-color: #f44336;
-        }
-        .reset-button:hover {
-            background-color: #e53935;
-        }
-        .name-input-container {
-            margin-top: 0px;
-            margin-bottom: 15px;
-            font-size: 4em;
-        }
-        .disc {
-            font-size: 28px;
-            font-weight: bold;
-            color: #ffeb3b;
-            background-color: #e53935;
-        }
-
-        @media screen and (max-width: 768px){
-            body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #fff6d3;
-            margin: 0;
-            padding: 0;
-        }
-            .disc {
-            font-size: 18px;
-            font-weight: bold;
-            color: #ffeb3b;
-            background-color: #e53935;
-            }
-
-            .header {
-            background-color: #ffeb3b;
-            padding: 8px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            }
-
-            button {
-            padding: 8px 15px;
-            font-size: 1.2rem;
-            margin: 2px;
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
         }
         .reset-button {
             background-color: #f44336;
@@ -177,198 +254,98 @@
         .reset-button:hover {
             background-color: #e53935;
         }
-        .container {
-            margin-top: 20px;
-            position: relative;
-        }
-        .gacha-machine {
-            position: relative;
-            width: 240px;
-            margin: 0 auto;
-        }
-        .machine {
-            width: 100%;
-            height: auto;
-        }
-        .knob {
-            position: absolute;
-            bottom: 90px;
-            right: 90px;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-        .result-stage {
-            position: absolute;
-            max-width: 100%;
-            width: 500px;
-            height: 1250px;
-            
-            left: 50%;
-            top: -720px;
-            transform: translate(-50%, 0);
-            pointer-events: none;
-        }
-        .ball {
-            width: 60px;
-            height: 60px;
-            position: absolute;
-            top: 20px; /* 落下開始位置を高く設定 */
-            left: 49%;
-            transform: translateX(-50%);
-            display: none;
-            animation: drop 1.5s ease-in-out forwards; /* 落下時間を少し長く */
+        
+        @keyframes multi-drop {
+            from {
+                transform: translateY(-500px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
         }
 
-.paper {
-    width: 228px;
-    height: 159px;
-    background-image: url(./img2/おみくじ紙B.png);
-    background-size: cover;
-    border: 2px solid black;
-    position: absolute;
-    top: -270px; /* 表示位置を上に移動 */
-    left: 18%; /* 少し左に移動 */
-    transform: translate(-50%, 0) scale(0); /* 初期は非表示 */
-    text-align: center;
-    line-height: 1.8;
-    font-size: 3rem;
-    font-weight: bold;
-    display: none;
-    animation: open 1.2s ease-in-out forwards; /* 拡大アニメーション */
-}
-
-@keyframes drop {
-    0% {
-        top: -12px; /* 落下開始位置 */
-    }
-    100% {
-        top: 20px; /* 落下終了位置 */
-    }
-}
-
-@keyframes open {
-    0% {
-        transform: scale(0);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-        .lucky-item {
-            font-size: 1.3rem;
-            color: #ff2222;
-            font-weight: bold;
-            margin-top: -10px;
-        }
-
+        @keyframes multi-open {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
         }
 
     </style>
 </head>
 <body>
     <div class="header" id="header">おみくじの挑戦者求む!</div>
-    <div class="disc">1回 100円(スパチャ)</div>
+    <div class="pricing-info">単発: 100円 / 10連: 1000円</div>
 
     <div class="container">
         <div class="gacha-machine">
             <img src="./img2/ガチャリアルA.png" alt="ガチャ筐体" class="machine">
-            <img src="./img2/つまみリアルA.png" alt="ツマミ" class="knob" id="knob">
+            <img src="./img2/IMG_5150.PNG" alt="ツマミ" class="knob" id="knob">
         </div>
-        <div class="result-stage" id="result-stage">
-            <img src="" alt="ガチャ玉" class="ball" id="ball">
-            <div class="paper" id="paper"></div>
-        </div>
-        <div class="name-input-container">
-            <input type="text" id="name-input" style="width: 200px; height: 40px; font-size: 28px;" placeholder="名前を入力" />
-            <button id="name-submit">OK</button>
-        </div>
+
+        <div class="multi-result-container" id="multi-result-container"></div>
+        
+        <div class="reveal-stage" id="reveal-stage"></div>
+
+    </div>
+
+    <div class="controls">
         <button id="start-button">回す</button>
+        <button id="multi-start-button">10連を回す</button>
         <button id="reset-button" class="reset-button">リセット</button>
     </div>
+    
+    <div class="name-input-area">
+        <input type="text" id="name-input" placeholder="挑戦者の名前を入力">
+        <button id="name-submit-button">反映</button>
+    </div>
+
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <div class="modal-grid">
+                <div id="summary-list"></div>
+                <div id="lucky-items-list"></div>
+            </div>
+            <button id="modal-close-button" class="reset-button">閉じる</button>
+        </div>
+    </div>
+
     <script>
         const fortunes = [
             { name: "神 吉", probability: 2, img: "./img2/神の玉.png" },
-            { name: "極 吉", probability: 8, img: "./img2/金の玉.PNG" },
-            { name: "大 吉", probability: 15, img: "./img2/銅玉.PNG" },
-            { name: "中 吉", probability: 25, img: "./img2/赤玉.png" },
-            { name: "小 吉", probability: 30, img: "./img2/青玉.png" },
+            { name: "極 吉", probability: 5, img: "./img2/金の玉.png" },
+            { name: "大 吉", probability: 21, img: "./img2/銅玉.png" },
+            { name: "中 吉", probability: 31, img: "./img2/赤玉.png" },
+            { name: "小 吉", probability: 21, img: "./img2/青玉.png" },
             { name: "凶", probability: 20, img: "./img2/外れ玉.png" }
         ];
 
         const luckyItems = [
-            "四つ葉のクローバー",
-            "金の鈴",
-            "赤いリボン",
-            "青い石",
-            "木の葉",
-            "光るペンダント",
-            "ラッキーコイン",
-            "幸運のカエル"
+            "四つ葉のクローバー", "猫のぬいぐるみ", "白い服", "妖怪メダル", "木の葉",
+            "光る指輪", "銀のコイン", "銅のコイン", "金色の時計"
         ];
-
-        let currentFortune = null;
-
+        
         const header = document.getElementById("header");
-        const nameInput = document.getElementById("name-input");
-        const nameSubmit = document.getElementById("name-submit");
         const knob = document.getElementById("knob");
-        const ball = document.getElementById("ball");
-        const paper = document.getElementById("paper");
         const startButton = document.getElementById("start-button");
+        const multiStartButton = document.getElementById("multi-start-button");
         const resetButton = document.getElementById("reset-button");
-        const resultStage = document.getElementById("result-stage");
+        const multiResultContainer = document.getElementById("multi-result-container");
+        const revealStage = document.getElementById("reveal-stage");
+        const resultModal = document.getElementById("result-modal");
+        const summaryList = document.getElementById("summary-list");
+        const luckyItemsList = document.getElementById("lucky-items-list");
+        const modalCloseButton = document.getElementById("modal-close-button");
+        const nameInput = document.getElementById("name-input");
+        const nameSubmitButton = document.getElementById("name-submit-button");
 
-        nameSubmit.addEventListener("click", function () {
-            const name = nameInput.value.trim();
-            if (name) {
-                header.textContent = `${name}さんの挑戦`;
-            } else {
-                header.textContent = "おみくじの挑戦者求む!";
-            }
-        });
-
-        startButton.addEventListener("click", function () {
-            currentFortune = drawFortune();
-            const luckyItem = drawLuckyItem();
-            ball.src = currentFortune.img;
-
-            knob.style.transform = "rotate(180deg)";
-
-            setTimeout(() => {
-                ball.style.display = "block";
-
-                setTimeout(() => {
-                    paper.style.display = "block";
-                    paper.style.animation = "open 2s ease-in-out forwards";
-
-                    knob.style.transform = "rotate(0deg)";
-                    paper.innerHTML = `
-                        ${currentFortune.name}
-                        <div class="lucky-item">ラッキーアイテム<br>${luckyItem}</div>
-                    `;
-                }, 1000);
-            }, 500);
-        });
-
-        resetButton.addEventListener("click", function () {
-            knob.style.transform = "rotate(0deg)";
-            ball.style.display = "none";
-            paper.style.display = "none";
-            paper.style.animation = "";
-            currentFortune = null;
-        });
 
         function drawFortune() {
             const random = Math.random() * 100;
             let cumulativeProbability = 0;
-
             for (const fortune of fortunes) {
                 cumulativeProbability += fortune.probability;
-                if (random < cumulativeProbability) {
-                    return fortune;
-                }
+                if (random < cumulativeProbability) return fortune;
             }
         }
 
@@ -377,16 +354,184 @@
             return luckyItems[randomIndex];
         }
 
-        function updateResultStagePosition() {
-            const gachaMachine = document.querySelector('.gacha-machine');
-            const machineRect = gachaMachine.getBoundingClientRect();
-
-            resultStage.style.top = `${machineRect.top + window.scrollY + machineRect.height / 2}px`;
-            resultStage.style.left = `${machineRect.left + window.scrollX + machineRect.width / 2}px`;
+        function toggleButtons(disabled) {
+            startButton.disabled = disabled;
+            multiStartButton.disabled = disabled;
+            resetButton.disabled = disabled;
         }
 
-        window.addEventListener('resize', updateResultStagePosition);
-        window.addEventListener('load', updateResultStagePosition);
+        function resetAll() {
+            knob.style.transform = "rotate(0deg)";
+            multiResultContainer.innerHTML = "";
+            revealStage.innerHTML = "";
+            resultModal.classList.remove('visible');
+            toggleButtons(false);
+        }
+
+        function handleSinglePull() {
+            resetAll();
+            toggleButtons(true);
+            knob.style.transform = "rotate(180deg)";
+
+            setTimeout(() => {
+                const result = {
+                    fortune: drawFortune(),
+                    luckyItem: drawLuckyItem()
+                };
+
+                const itemDiv = document.createElement("div");
+                itemDiv.className = "multi-result-item";
+                const ballImg = document.createElement("img");
+                ballImg.src = result.fortune.img;
+                ballImg.className = "multi-ball";
+                itemDiv.appendChild(ballImg);
+                multiResultContainer.appendChild(itemDiv);
+
+                setTimeout(() => {
+                    const paperDiv = document.createElement("div");
+                    paperDiv.className = "multi-paper";
+                    paperDiv.innerHTML = `${result.fortune.name}<div class="multi-lucky-item">ラッキーアイテム<br>${result.luckyItem}</div>`;
+                    
+                    revealStage.appendChild(paperDiv);
+                    toggleButtons(false);
+                }, 1000);
+            }, 500);
+        }
+        
+        async function handleMultiPull() {
+            resetAll();
+            toggleButtons(true);
+            knob.style.transform = "rotate(360deg)";
+
+            const results = [];
+            for (let i = 0; i < 10; i++) {
+                results.push({
+                    fortune: drawFortune(),
+                    luckyItem: drawLuckyItem()
+                });
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await dropMysteryBalls();
+            await revealResultsSequentially(results);
+            displaySummary(results);
+        }
+
+        function dropMysteryBalls() {
+            const mysteryBallImgSrc = "./img2/謎玉.png"; 
+
+            return new Promise(resolve => {
+                for (let i = 0; i < 10; i++) {
+                    setTimeout(() => {
+                        const itemDiv = document.createElement("div");
+                        itemDiv.className = "multi-result-item";
+                        
+                        const ballImg = document.createElement("img");
+                        ballImg.src = mysteryBallImgSrc;
+                        ballImg.className = "multi-ball";
+                        
+                        itemDiv.appendChild(ballImg);
+                        multiResultContainer.appendChild(itemDiv);
+
+                        if (i === 9) {
+                            setTimeout(resolve, 2000); 
+                        }
+                    }, i * 100);
+                }
+            });
+        }
+        
+        // ★★★ 変更点: 演出のタイミングを調整 ★★★
+        function revealResultsSequentially(results) {
+            const ballImages = document.querySelectorAll(".multi-result-container .multi-ball");
+
+            return new Promise(resolve => {
+                results.forEach((result, i) => {
+                    // 2秒ごとに、次の玉の開封サイクルを開始
+                    setTimeout(() => {
+                        // ① まず、玉の色を変える
+                        const targetBall = ballImages[i];
+                        if (targetBall) {
+                            targetBall.style.opacity = '0';
+                            setTimeout(() => {
+                                targetBall.src = result.fortune.img;
+                                targetBall.style.opacity = '1';
+                            }, 200);
+                        }
+
+                        // ② 玉の色が変わってから、1秒後に紙を開封する
+                        setTimeout(() => {
+                            revealStage.innerHTML = "";
+                            const paperDiv = document.createElement("div");
+                            paperDiv.className = "multi-paper small";
+                            paperDiv.innerHTML = `${result.fortune.name}<div class="multi-lucky-item">${result.luckyItem}</div>`;
+                            revealStage.appendChild(paperDiv);
+                        }, 1000); // 1秒待つ
+
+                        // 最後の処理が終わったら次に進む
+                        if (i === results.length - 1) {
+                            setTimeout(() => {
+                                revealStage.innerHTML = "";
+                                resolve();
+                            }, 2000);
+                        }
+                    }, i * 2000);
+                });
+            });
+        }
+
+        function displaySummary(results) {
+            const fortuneSummary = {};
+            results.forEach(result => {
+                const name = result.fortune.name;
+                fortuneSummary[name] = (fortuneSummary[name] || 0) + 1;
+            });
+
+            let summaryHtml = '<h3>おみくじ結果</h3><ul>';
+            for (const name in fortuneSummary) {
+                summaryHtml += `<li>${name}: ${fortuneSummary[name]}個</li>`;
+            }
+            summaryHtml += '</ul>';
+            summaryList.innerHTML = summaryHtml;
+
+            const itemSummary = {};
+            results.forEach(result => {
+                const itemName = result.luckyItem;
+                itemSummary[itemName] = (itemSummary[itemName] || 0) + 1;
+            });
+            
+            let itemsHtml = '<h3>ラッキーアイテム</h3><ul>';
+            for (const itemName in itemSummary) {
+                itemsHtml += `<li>${itemName}: ${itemSummary[itemName]}個</li>`;
+            }
+            itemsHtml += '</ul>';
+            luckyItemsList.innerHTML = itemsHtml;
+
+            resultModal.classList.add('visible');
+        }
+
+        
+        startButton.addEventListener("click", handleSinglePull);
+        multiStartButton.addEventListener("click", handleMultiPull);
+        resetButton.addEventListener("click", resetAll);
+        modalCloseButton.addEventListener("click", () => {
+             resultModal.classList.remove('visible');
+             toggleButtons(false);
+        });
+
+        
+        nameSubmitButton.addEventListener("click", () => {
+            const name = nameInput.value.trim();
+
+            if (name) {
+                header.textContent = `${name}の挑戦`;
+            } else {
+                header.textContent = "おみくじの挑戦者求む!";
+            }
+        });
+
+        resetAll();
     </script>
 </body>
 </html>
