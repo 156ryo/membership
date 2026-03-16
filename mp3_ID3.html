@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MP3 ID3 Tag Editor</title>
+    <script src="https://cdn.jsdelivr.net/npm/browser-id3-writer@4.4.0/dist/browser-id3-writer.min.js"></script>
+    <style>
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f9; color: #333; }
+        .container { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); max-width: 500px; margin: 0 auto; }
+        h2 { margin-top: 0; font-size: 1.5em; }
+        .status-bar { padding: 12px; margin-bottom: 20px; border-radius: 4px; background: #ffebee; color: #c62828; font-weight: bold; text-align: center; }
+        .status-bar.active { background: #e8f5e9; color: #2e7d32; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; font-size: 1em; }
+        button { background-color: #1976d2; color: white; border: none; padding: 12px 15px; border-radius: 4px; cursor: pointer; width: 100%; font-size: 1em; font-weight: bold; margin-bottom: 10px; transition: background-color 0.2s; }
+        button:hover { background-color: #1565c0; }
+        button:disabled { background-color: #b0bec5; cursor: not-allowed; }
+        .preview { margin-top: 10px; text-align: center; }
+        canvas { border: 1px solid #ddd; border-radius: 4px; }
+        .note { font-size: 0.8em; color: #666; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>MP3 タグエディター</h2>
+    
+    <div id="sdStatus" class="status-bar">SDカード: 未接続 (フォルダを開いてください)</div>
+    <button id="openFolderBtn">📁 対象のフォルダ（SDカード等）を開く</button>
+
+    <div id="editorSection" style="display: none; margin-top: 20px;">
+        <div class="form-group">
+            <label for="fileSelect">編集するMP3ファイル</label>
+            <select id="fileSelect"></select>
+        </div>
+
+        <div class="form-group">
+            <label for="album">アルバム名</label>
+            <input type="text" id="album" maxlength="20" placeholder="最大20文字まで">
+        </div>
+
+        <div class="form-group">
+            <label for="artist">アーティスト名</label>
+            <input type="text" id="artist">
+        </div>
+
+        <div class="form-group">
+            <label for="trackNum">トラック番号</label>
+            <input type="number" id="trackNum" min="1">
+        </div>
+
+        <div class="form-group">
+            <label for="coverArt">ジャケット画像</label>
+            <div class="note">※自動的に120x120にリサイズされます</div>
+            <input type="file" id="coverArt" accept="image/*" style="margin-top: 5px;">
+            <div class="preview">
+                <canvas id="imageCanvas" width="120" height="120" style="display:none;"></canvas>
+            </div>
+        </div>
+
+        <button id="writeBtn" disabled>💾 タグを書き込む</button>
+    </div>
+</div>
+
+<script>
+    const openFolderBtn = document.getElementById('openFolderBtn');
+    const sdStatus = document.getElementById('sdStatus');
+    const editorSection = document.getElementById('editorSection');
+    const fileSelect = document.getElementById('fileSelect');
+    const writeBtn = document.getElementById('writeBtn');
+    const coverArtInput = document.getElementById('coverArt');
+    const imageCanvas = document.getElementById('imageCanvas');
+    const ctx = imageCanvas.getContext('2d');
+
+    let directoryHandle = null;
+    let coverArtBuffer = null; // 画像のArrayBufferを保持
+
+    // 1. フォルダを開く処理
+    openFolderBtn.addEventListener('click', async () => {
+        try {
+            directoryHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+            sdStatus.textContent = `接続済: ${directoryHandle.name}`;
+            sdStatus.classList.add('active');
+            editorSection.style.display = 'block';
+            
+            await loadMp3Files();
+        } catch (error) {
+            console.error('フォルダ選択エラー:', error);
+            if (error.name !== 'AbortError') {
+                alert('フォルダの読み込みに失敗しました。');
+            }
+        }
+    });
+
+    // 2. フォルダ内のMP3をリストアップ
+    async function loadMp3Files() {
+        fileSelect.innerHTML = '';
+        let hasFiles = false;
+
+        for await (const entry of directoryHandle.values()) {
+            if (entry.kind === 'file' && entry.name.toLowerCase().endsWith('.mp3')) {
+                const option = document.createElement('option');
+                option.value = entry.name;
+                option.textContent = entry.name;
+                fileSelect.appendChild(option);
+                hasFiles = true;
+            }
+        }
+
+        if (hasFiles) {
+            writeBtn.disabled = false;
+        } else {
+            const option = document.createElement('option');
+            option.textContent = "MP3ファイルが見つかりません";
+            fileSelect.appendChild(option);
+            writeBtn.disabled = true;
+        }
+    }
+
+    // 3. 画像の読み込みと120x120リサイズ (ArrayBuffer化)
+    coverArtInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) {
+            coverArtBuffer = null;
+            imageCanvas.style.display = 'none';
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const img = new Image();
+            img.onload = () => {
+                ctx.clearRect(0, 0, 120, 120);
+                ctx.drawImage(img, 0, 0, 120, 120);
+                imageCanvas.style.display = 'inline-block';
+                
+                // CanvasからBlobを生成し、ArrayBufferに変換（ID3書き込み用）
+                imageCanvas.toBlob(async (blob) => {
+                    coverArtBuffer = await blob.arrayBuffer();
+                }, 'image/jpeg', 0.9);
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // 4. タグの書き込み処理
+    writeBtn.addEventListener('click', async () => {
+        try {
+            writeBtn.disabled = true;
+            writeBtn.textContent = '書き込み中...';
+
+            const selectedFileName = fileSelect.value;
+            // 念のためJS側でも20文字でカット
+            const album = document.getElementById('album').value.substring(0, 20); 
+            const artist = document.getElementById('artist').value;
+            const trackNum = document.getElementById('trackNum').value;
+
+            // ファイルハンドルの取得とデータの読み込み
+            const fileHandle = await directoryHandle.getFileHandle(selectedFileName);
+            const file = await fileHandle.getFile();
+            const arrayBuffer = await file.arrayBuffer();
+
+            // ID3Writerの初期化
+            const writer = new ID3Writer(arrayBuffer);
+
+            // 入力されている項目だけタグをセット
+            if (album) writer.setFrame('TALB', album);
+            if (artist) writer.setFrame('TPE1', [artist]); // アーティストは配列指定
+            if (trackNum) writer.setFrame('TRCK', trackNum);
+            
+            if (coverArtBuffer) {
+                writer.setFrame('APIC', {
+                    type: 3, // 3 = Cover (front)
+                    data: coverArtBuffer,
+                    description: 'Cover'
+                });
+            }
+
+            // タグを付与した新しいバッファを生成
+            writer.addTag();
+            const taggedBuffer = writer.arrayBuffer;
+
+            // ファイルに上書き保存
+            const writable = await fileHandle.createWritable();
+            await writable.write(taggedBuffer);
+            await writable.close();
+
+            alert(`${selectedFileName} にタグを書き込みました！`);
+            
+            // フォームのリセット（必要に応じて）
+            // document.getElementById('album').value = '';
+            // document.getElementById('artist').value = '';
+            // document.getElementById('trackNum').value = '';
+
+        } catch (error) {
+            console.error(error);
+            alert('書き込み中にエラーが発生しました。\n書き込み権限が許可されているか確認してください。');
+        } finally {
+            writeBtn.disabled = false;
+            writeBtn.textContent = '💾 タグを書き込む';
+        }
+    });
+</script>
+
+</body>
+</html>
